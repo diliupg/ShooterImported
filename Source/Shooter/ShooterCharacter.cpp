@@ -19,7 +19,7 @@ void AShooterCharacter::BeginPlay()
 	UE_LOG( LogTemp, Warning, TEXT( "BeginPlay() called!" ) );
 
 	int myInt( 42 );
-	UE_LOG( ( LogTemp, Warning, TEXT( "int myInt: %d", myInt );
+	UE_LOG( LogTemp, Warning, TEXT( "int myInt: %d", myInt ) );
 }
 
 // Called every frame
