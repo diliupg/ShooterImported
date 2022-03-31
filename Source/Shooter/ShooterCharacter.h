@@ -72,6 +72,9 @@ private:
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = Combat, Meta = ( AllowPrivateAccess = "true" ) );
 	class UParticleSystem* MuzzleFlash;
 
+	/* montage for firing the weapon */
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = Combat, Meta = ( AllowPrivateAccess = "true" ) );
+	class UAnimMontage* HipFireMontage;
 
 public:
 	/** returns CameraBoom subObject (child object) */
