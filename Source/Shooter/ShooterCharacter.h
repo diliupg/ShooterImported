@@ -36,6 +36,9 @@ protected:
 	@param Rate  This is a normalized rate i.e. 1.0 means 100% of desired rate
 	*/
 	void LookUpAtRate( float Rate );
+
+	/* called when the fire button is pressed*/
+	void FireWeapon( );
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
