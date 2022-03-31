@@ -1,1 +1,5 @@
 Started the Shooter Course 0n:30-3-22
+
+shotter project all content in the ShooterProject Udemy Course Material folder
+
+Content/ParagonLtBelica/* is UNTRACKED
