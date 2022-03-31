@@ -64,6 +64,10 @@ private:
 	UPROPERTY( VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = ( AllowPrivateAccess = "true" ) )
 	float BaseLookUpRate;
 
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = Combat, Meta = ( AllowPrivateAccess = "true" ) );
+	class USoundCue* FireSound;
+
+
 public:
 	/** returns CameraBoom subObject (child object) */
 	FORCEINLINE USpringArmComponent* GetCameraBoom( ) const { return CameraBoom; }
