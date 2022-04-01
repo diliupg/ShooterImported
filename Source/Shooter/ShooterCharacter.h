@@ -76,6 +76,10 @@ private:
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = Combat, Meta = ( AllowPrivateAccess = "true" ) );
 	class UAnimMontage* HipFireMontage;
 
+	/* particles spawned upon bullet impact */
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = Combat, Meta = ( AllowPrivateAccess = "true" ) );
+	UParticleSystem* ImpactParticles;
+
 public:
 	/** returns CameraBoom subObject (child object) */
 	FORCEINLINE USpringArmComponent* GetCameraBoom( ) const { return CameraBoom; }
