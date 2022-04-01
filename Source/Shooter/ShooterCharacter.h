@@ -80,6 +80,10 @@ private:
 	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = Combat, Meta = ( AllowPrivateAccess = "true" ) );
 	UParticleSystem* ImpactParticles;
 
+	/* smoke trails for bullets */
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = Combat, Meta = ( AllowPrivateAccess = "true" ) );
+	UParticleSystem* BeamParticles;
+
 public:
 	/** returns CameraBoom subObject (child object) */
 	FORCEINLINE USpringArmComponent* GetCameraBoom( ) const { return CameraBoom; }
