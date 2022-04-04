@@ -46,6 +46,8 @@ protected:
 	void AimingButtonPressed();
 	void AimingButtonReleased( );
 
+	void CameraInterpZoom(float DeltaTime);
+
 
 public:	
 	// Called every frame
@@ -101,6 +103,13 @@ private:
 
 	/* fieSld of view value when zoomed in */
 	float CameraZoomedFov;
+
+	/* current FOV this frame*/
+	float cameraCurrentFOV;
+
+	/* interp speed for zooming when aiming*/
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Combat, Meta = ( AllowPrivateAccess = "true" ) )
+	float ZoomInterpSpeed;
 
 public:
 	/** returns CameraBoom subObject (child object) */
