@@ -315,7 +315,6 @@ void AShooterCharacter::CalculateCrossghaisSpread( float DeltaTime )
 		VelocityMultiplierRange,
 		Velocity.Size( ) );
 	
-
 	CrosshairSpreadMultiplier = 0.5 + CrosshairVelocityFactor;
 }
 
@@ -329,6 +328,9 @@ void AShooterCharacter::Tick(float DeltaTime)
 
 	// change look sensitivity based on aiming
 	SetLookRates( );
+
+	// calculate crosshair spread multiplier 
+	CalculateCrossghaisSpread( DeltaTime );
 }
 
 // Called to bind functionality to input
@@ -351,5 +353,10 @@ void AShooterCharacter::SetupPlayerInputComponent( UInputComponent* PlayerInputC
 
 	PlayerInputComponent->BindAction( "AimingButton", IE_Pressed, this, &AShooterCharacter::AimingButtonPressed );
 	PlayerInputComponent->BindAction( "AImingButton", IE_Released, this, &AShooterCharacter::AimingButtonReleased );
+}
+
+float AShooterCharacter::GetCrosshairSpreadMultiplier( ) const
+{
+	return CrosshairSpreadMultiplier;
 }
 
