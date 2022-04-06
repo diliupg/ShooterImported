@@ -64,6 +64,14 @@ protected:
 	void SetLookRates( );
 
 	void CalculateCrosshairSpread( float DeltaTime );
+	
+	void FireButtonPressed( );
+	void FireButtonReleased( );
+
+	void StartFireTimer( );
+
+	UFUNCTION()
+	void AutoFireReset( );
 
 	void StartCrosshairBulletFire( );
 
@@ -182,6 +190,18 @@ private:
 	/** Shooting component for crosshairs spread */
 	UPROPERTY( VisibleAnywhere, BlueprintReadOnly, Category = Crosshairs, meta = ( AllowPrivateAccess = "true" ) )
 	float CrosshairShootingFactor;
+
+	/* left mouse button or right console trigger pressed  */
+	bool bFireButtonPressed;
+
+	/* true when we can fire and false when waiting for the timer. */
+	bool bShouldFire;
+
+	/* rate of Automatic gun fire*/
+	float AutomaticFireRate;
+
+	/*  sets a timer between gunshots */
+	FTimerHandle AutoFireTimer;
 
 	float ShootTimeDuration;
 	bool bFiringBullet;
