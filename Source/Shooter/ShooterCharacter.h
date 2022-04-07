@@ -74,7 +74,7 @@ protected:
 	void AutoFireReset( );
 
 	/* line trace for items under the crosshairs */
-	bool TraceUnderCrossHars( FHitResult& OutHitResult );
+	bool TraceUnderCrossHars( FHitResult& OutHitResult,  FVector& OutHitLocation );
 
 	void StartCrosshairBulletFire( );
 
