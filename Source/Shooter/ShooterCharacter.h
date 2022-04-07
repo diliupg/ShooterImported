@@ -76,6 +76,9 @@ protected:
 	/* line trace for items under the crosshairs */
 	bool TraceUnderCrossHars( FHitResult& OutHitResult,  FVector& OutHitLocation );
 
+	/* trace for items if OverlappedItemCOunt > 0 */
+	void TraceForItems( );
+
 	void StartCrosshairBulletFire( );
 
 	UFUNCTION()
@@ -206,6 +209,13 @@ private:
 	/*  sets a timer between gunshots */
 	FTimerHandle AutoFireTimer;
 
+	/* true if we should trace every frame for items */
+	bool bShouldTraceForItems;
+
+	/* number of overlapped AItems */
+	int8 OverlappedItemCount;
+
+
 	float ShootTimeDuration;
 	bool bFiringBullet;
 	FTimerHandle CrosshairShootTimer;
@@ -220,4 +230,9 @@ public:
 
 	UFUNCTION( BlueprintCallable )
 	float GetCrosshairSpreadMultiplier( ) const;
+
+	FORCEINLINE int8 GetOverlappedItemCount( ) const { return OverlappedItemCount; }
+
+	/* adds/subtracts to/from OverlappedItemCount and updates bSHouldTraceForItems */
+	void IncrementOverlappedItemCount( int8 Amount );
 };

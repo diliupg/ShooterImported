@@ -45,6 +45,8 @@ AShooterCharacter::AShooterCharacter( ) :
 	AutomaticFireRate( 0.1f ),
 	bShouldFire( true ),
 	bFireButtonPressed( false ),
+	// Item trace variables
+	bShouldTraceForItems( false ),
 	// bullet fire timer variables
 	ShootTimeDuration( 0.05f ),
 	bFiringBullet( false )
@@ -445,6 +447,25 @@ bool AShooterCharacter::TraceUnderCrossHars( FHitResult& OutHitResult, FVector& 
 	return false;
 }
 
+void AShooterCharacter::TraceForItems( )
+{
+	if ( bShouldTraceForItems )
+	{
+		FHitResult ItemTraceResult;
+		FVector HiiLocation;
+		TraceUnderCrossHars( ItemTraceResult, HiiLocation );
+		if ( ItemTraceResult.bBlockingHit )
+		{
+			AItem* HitItem = Cast<AItem>( ItemTraceResult.Actor );
+			if ( HitItem && HitItem->GetPickupWidget( ) )
+			{
+				//show items pickup widget
+				HitItem->GetPickupWidget( )->SetVisibility( true );
+			}
+		}
+	}
+}
+
 void AShooterCharacter::StartCrosshairBulletFire( )
 {
 	bFiringBullet = true;
@@ -472,19 +493,9 @@ void AShooterCharacter::Tick( float DeltaTime )
 	SetLookRates( );
 	// Calculate crosshair spread multiplier
 	CalculateCrosshairSpread( DeltaTime );
-
-	FHitResult ItemTraceResult;
-	FVector HiiLocation;
-	TraceUnderCrossHars( ItemTraceResult, HiiLocation );
-	if ( ItemTraceResult.bBlockingHit )
-	{
-		AItem* HitItem = Cast<AItem>( ItemTraceResult.Actor );
-		if ( HitItem && HitItem->GetPickupWidget() )
-		{
-			//show items pickup widget
-			HitItem->GetPickupWidget( )->SetVisibility( true );
-		}
-	}
+	// Check OverlappedItemCount, then trace for items
+	TraceForItems( );
+	
 
 }
 
@@ -518,5 +529,19 @@ void AShooterCharacter::SetupPlayerInputComponent( UInputComponent* PlayerInputC
 float AShooterCharacter::GetCrosshairSpreadMultiplier( ) const
 {
 	return CrosshairSpreadMultiplier;
+}
+
+void AShooterCharacter::IncrementOverlappedItemCount( int8 Amount )
+{
+	if ( OverlappedItemCount + Amount <= 0 )
+	{
+		OverlappedItemCount = 0;
+		bShouldTraceForItems = false;
+	}
+	else
+	{
+		OverlappedItemCount += Amount;
+		bShouldTraceForItems = true;
+	}
 }
 
