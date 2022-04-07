@@ -10,6 +10,8 @@
 #include "Engine/SkeletalMeshSocket.h"
 #include "DrawDebugHelpers.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "Item.h"
+#include "Components/WidgetComponent.h"
 
 // Sets default values
 AShooterCharacter::AShooterCharacter( ) :
@@ -426,6 +428,46 @@ void AShooterCharacter::AutoFireReset( )
 	}
 }
 
+bool AShooterCharacter::TraceUnderCrossHars( FHitResult& OutHitResult )
+{
+	// get viewport size
+	FVector2D ViewportSize;
+	if ( GEngine && GEngine->GameViewport )
+	{
+		GEngine->GameViewport->GetViewportSize( ViewportSize );
+	}
+
+	// Get screen space location of crosshairs
+	FVector2D CrosshairLocation( ViewportSize.X / 2.f, ViewportSize.Y / 2.f );
+	//CrosshairLocation.Y -= 50.f; // don't need this line as crosshairs now in screen center and NOT 50 up
+	FVector CrosshairWorldPosition;
+	FVector CrosshairWorldDirection;
+
+	// Get world position and direction of crosshairs
+	bool bScreenToWorld = UGameplayStatics::DeprojectScreenToWorld(
+		UGameplayStatics::GetPlayerController( this, 0 ),
+		CrosshairLocation,
+		CrosshairWorldPosition,
+		CrosshairWorldDirection );
+
+	if ( bScreenToWorld )
+	{
+		// trace from crosshair world location outward
+		const FVector Start { CrosshairWorldPosition };
+		const FVector End { Start + CrosshairWorldDirection * 50'000.f };
+		GetWorld( )->LineTraceSingleByChannel(
+			OutHitResult,
+			Start,
+			End,
+			ECollisionChannel::ECC_Visibility );
+		if ( OutHitResult.bBlockingHit )
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 void AShooterCharacter::StartCrosshairBulletFire( )
 {
 	bFiringBullet = true;
@@ -453,6 +495,18 @@ void AShooterCharacter::Tick( float DeltaTime )
 	SetLookRates( );
 	// Calculate crosshair spread multiplier
 	CalculateCrosshairSpread( DeltaTime );
+
+	FHitResult ItemTraceResult;
+	TraceUnderCrossHars( ItemTraceResult );
+	if ( ItemTraceResult.bBlockingHit )
+	{
+		AItem* HitItem = Cast<AItem>( ItemTraceResult.Actor );
+		if ( HitItem && HitItem->GetPickupWidget() )
+		{
+			//show items pickup widget
+			HitItem->GetPickupWidget( )->SetVisibility( true );
+		}
+	}
 
 }
 

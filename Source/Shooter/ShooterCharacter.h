@@ -73,6 +73,9 @@ protected:
 	UFUNCTION()
 	void AutoFireReset( );
 
+	/* line trace for items under the crosshairs */
+	bool TraceUnderCrossHars( FHitResult& OutHitResult );
+
 	void StartCrosshairBulletFire( );
 
 	UFUNCTION()
