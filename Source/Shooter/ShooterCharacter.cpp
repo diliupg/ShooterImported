@@ -462,7 +462,24 @@ void AShooterCharacter::TraceForItems( )
 				//show items pickup widget
 				HitItem->GetPickupWidget( )->SetVisibility( true );
 			}
+			// we hit an AItem last frame
+			if ( TraceHitItemLastFrame )
+			{
+				if ( HitItem != TraceHitItemLastFrame )
+				{
+					// we are hitting a different AItem this frame than the last frame or AItem is null
+					TraceHitItemLastFrame->GetPickupWidget()->SetVisibility( false );
+				}
+			}
+			// store a reference to HitItem for next frame
+			TraceHitItemLastFrame = HitItem;
 		}
+	}
+
+	else if ( TraceHitItemLastFrame )
+	{
+		// no longer overlapping any item, so item last frame should not show any widget
+		TraceHitItemLastFrame->GetPickupWidget( )->SetVisibility( false );
 	}
 }
 
@@ -495,8 +512,6 @@ void AShooterCharacter::Tick( float DeltaTime )
 	CalculateCrosshairSpread( DeltaTime );
 	// Check OverlappedItemCount, then trace for items
 	TraceForItems( );
-	
-
 }
 
 // Called to bind functionality to input

@@ -215,6 +215,9 @@ private:
 	/* number of overlapped AItems */
 	int8 OverlappedItemCount;
 
+	/* the AItem hit last frame */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = TItems, meta = ( AllowPrivateAccess = "true" ) )
+	class AItem* TraceHitItemLastFrame;
 
 	float ShootTimeDuration;
 	bool bFiringBullet;
