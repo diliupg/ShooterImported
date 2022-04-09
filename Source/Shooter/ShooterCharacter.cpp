@@ -13,6 +13,8 @@
 #include "Item.h"
 #include "Components/WidgetComponent.h"
 #include "Weapon.h"
+#include "Components/SphereComponent.h"
+#include "Components/BoxComponent.h"
 
 // Sets default values
 AShooterCharacter::AShooterCharacter( ) :
@@ -42,15 +44,16 @@ AShooterCharacter::AShooterCharacter( ) :
 	CrosshairInAirFactor( 0.f ),
 	CrosshairAimFactor( 0.f ),
 	CrosshairShootingFactor( 0.f ),
+	// bullet fire timer variables
+	ShootTimeDuration( 0.05f ),
+	bFiringBullet( false ),
+
 	// automatic fire variables
 	AutomaticFireRate( 0.1f ),
 	bShouldFire( true ),
 	bFireButtonPressed( false ),
 	// Item trace variables
-	bShouldTraceForItems( false ),
-	// bullet fire timer variables
-	ShootTimeDuration( 0.05f ),
-	bFiringBullet( false )
+	bShouldTraceForItems( false )
 
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -90,8 +93,8 @@ void AShooterCharacter::BeginPlay( )
 		CameraDefaultFOV = GetFollowCamera( )->FieldOfView;
 		CameraCurrentFOV = CameraDefaultFOV;
 	}
-	// spawn the default weapon and attach it to the mesh
-	SpawnDefaultWeapon( );
+	// spawn the default weapon and equip it
+	EquipWeapon( SpawnDefaultWeapon( ) );
 }
 
 void AShooterCharacter::MoveForward( float Value )
@@ -486,20 +489,37 @@ void AShooterCharacter::TraceForItems( )
 	}
 }
 
-void AShooterCharacter::SpawnDefaultWeapon( )
+AWeapon* AShooterCharacter:: SpawnDefaultWeapon( )
 {
 	// check the TSubClassOf Variable
 	if ( DefaultWeaponClass )
 	{
 		// Spawn the Weapon
-		AWeapon* DefaultWeapon = GetWorld( )->SpawnActor<AWeapon>( DefaultWeaponClass );
+		return GetWorld( )->SpawnActor<AWeapon>( DefaultWeaponClass );
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+
+void AShooterCharacter::EquipWeapon( AWeapon* WeaponToEquip )
+{
+	if ( WeaponToEquip )
+	{
+		// set AreaSphere to ignore all collision channels
+		WeaponToEquip->GetAreaSphere( )->SetCollisionResponseToAllChannels( ECollisionResponse::ECR_Ignore);
+		// set CollisionBox to ignore all collision channels
+		WeaponToEquip->GetCollisionBox( )->SetCollisionResponseToAllChannels( ECollisionResponse::ECR_Ignore );
 		// Get the Hand Socket
 		const USkeletalMeshSocket* HandSocket = GetMesh( )->GetSocketByName( FName( "RightHandSocket" ) );
 		if ( HandSocket )
 		{
 			// attach the weapon to the hand socket  RightHandSocket
-			HandSocket->AttachActor( DefaultWeapon, GetMesh( ) );
+			HandSocket->AttachActor( WeaponToEquip, GetMesh( ) );
 		}
+		// set equipped weapon to the newly spawned weapon
+		EquippedWeapon = WeaponToEquip;
 	}
 }
 

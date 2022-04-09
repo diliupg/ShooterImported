@@ -79,7 +79,11 @@ protected:
 	/* trace for items if OverlappedItemCOunt > 0 */
 	void TraceForItems( );
 
-	void SpawnDefaultWeapon( );
+	/* spawns a default weapon and equips it */
+	class AWeapon* SpawnDefaultWeapon( );
+
+	/* takes a weapon and attaches it to the mesh*/
+	void EquipWeapon( AWeapon* WeaponToEquip );
 
 	void StartCrosshairBulletFire( );
 
@@ -199,6 +203,10 @@ private:
 	UPROPERTY( VisibleAnywhere, BlueprintReadOnly, Category = Crosshairs, meta = ( AllowPrivateAccess = "true" ) )
 	float CrosshairShootingFactor;
 
+	float ShootTimeDuration;
+	bool bFiringBullet;
+	FTimerHandle CrosshairShootTimer;
+
 	/* left mouse button or right console trigger pressed  */
 	bool bFireButtonPressed;
 
@@ -223,15 +231,11 @@ private:
 
 	/* currently equipped weapon */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Combat, meta = ( AllowPrivateAccess = "true" ) )
-	class AWeapon* EquippedWeapon;
+	AWeapon* EquippedWeapon;
 
 	/* Set this in Blueprints for the default weapon class */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Combat, meta = ( AllowPrivateAccess = "true" ) )
 	TSubclassOf<AWeapon> DefaultWeaponClass;
-
-	float ShootTimeDuration;
-	bool bFiringBullet;
-	FTimerHandle CrosshairShootTimer;
 
 public:
 	/** Returns CameraBoom subobject */
