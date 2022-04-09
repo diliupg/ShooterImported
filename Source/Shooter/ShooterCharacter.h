@@ -79,6 +79,8 @@ protected:
 	/* trace for items if OverlappedItemCOunt > 0 */
 	void TraceForItems( );
 
+	void SpawnDefaultWeapon( );
+
 	void StartCrosshairBulletFire( );
 
 	UFUNCTION()
@@ -218,6 +220,14 @@ private:
 	/* the AItem hit last frame */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = TItems, meta = ( AllowPrivateAccess = "true" ) )
 	class AItem* TraceHitItemLastFrame;
+
+	/* currently equipped weapon */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Combat, meta = ( AllowPrivateAccess = "true" ) )
+	class AWeapon* EquippedWeapon;
+
+	/* Set this in Blueprints for the default weapon class */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Combat, meta = ( AllowPrivateAccess = "true" ) )
+	TSubclassOf<AWeapon> DefaultWeaponClass;
 
 	float ShootTimeDuration;
 	bool bFiringBullet;
