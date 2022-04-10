@@ -520,6 +520,7 @@ void AShooterCharacter::EquipWeapon( AWeapon* WeaponToEquip )
 		}
 		// set equipped weapon to the newly spawned weapon
 		EquippedWeapon = WeaponToEquip;
+		EquippedWeapon->SetItemState( EItemState::EIS_Equipped );
 	}
 }
 
