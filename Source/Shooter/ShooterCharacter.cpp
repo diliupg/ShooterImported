@@ -49,8 +49,8 @@ AShooterCharacter::AShooterCharacter( ) :
 	bFiringBullet( false ),
 
 	// automatic fire variables
-	AutomaticFireRate( 0.1f ),
 	bShouldFire( true ),
+	AutomaticFireRate( 0.1f ),
 	bFireButtonPressed( false ),
 	// Item trace variables
 	bShouldTraceForItems( false )
@@ -519,6 +519,25 @@ void AShooterCharacter::EquipWeapon( AWeapon* WeaponToEquip )
 	}
 }
 
+void AShooterCharacter::DropWeapon( )
+{
+	if ( EquippedWeapon )
+	{
+		FDetachmentTransformRules DetachmentTransfoemRules( EDetachmentRule::KeepWorld, true );
+		EquippedWeapon->GetItemMesh( )->DetachFromComponent( DetachmentTransfoemRules );
+	}
+}
+
+void AShooterCharacter::SelectButtonPressed( )
+{
+	DropWeapon( );
+}
+
+void AShooterCharacter::SelectButtonReleased( )
+{
+
+}
+
 void AShooterCharacter::StartCrosshairBulletFire( )
 {
 	bFiringBullet = true;
@@ -575,7 +594,13 @@ void AShooterCharacter::SetupPlayerInputComponent( UInputComponent* PlayerInputC
 		&AShooterCharacter::AimingButtonPressed );
 	PlayerInputComponent->BindAction( "AimingButton", IE_Released, this,
 		&AShooterCharacter::AimingButtonReleased );
+
+	PlayerInputComponent->BindAction( "Select", IE_Pressed, this,
+		&AShooterCharacter::SelectButtonPressed );
+	PlayerInputComponent->BindAction( "Select", IE_Released, this,
+		&AShooterCharacter::SelectButtonReleased );
 }
+
 
 float AShooterCharacter::GetCrosshairSpreadMultiplier( ) const
 {
