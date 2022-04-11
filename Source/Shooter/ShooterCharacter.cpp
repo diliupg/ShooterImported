@@ -13,8 +13,6 @@
 #include "Item.h"
 #include "Components/WidgetComponent.h"
 #include "Weapon.h"
-#include "Components/SphereComponent.h"
-#include "Components/BoxComponent.h"
 
 // Sets default values
 AShooterCharacter::AShooterCharacter( ) :
@@ -44,16 +42,15 @@ AShooterCharacter::AShooterCharacter( ) :
 	CrosshairInAirFactor( 0.f ),
 	CrosshairAimFactor( 0.f ),
 	CrosshairShootingFactor( 0.f ),
-	// bullet fire timer variables
-	ShootTimeDuration( 0.05f ),
-	bFiringBullet( false ),
-
 	// automatic fire variables
-	bShouldFire( true ),
 	AutomaticFireRate( 0.1f ),
+	bShouldFire( true ),
 	bFireButtonPressed( false ),
 	// Item trace variables
-	bShouldTraceForItems( false )
+	bShouldTraceForItems( false ),
+	// bullet fire timer variables
+	ShootTimeDuration( 0.05f ),
+	bFiringBullet( false )
 
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -93,8 +90,8 @@ void AShooterCharacter::BeginPlay( )
 		CameraDefaultFOV = GetFollowCamera( )->FieldOfView;
 		CameraCurrentFOV = CameraDefaultFOV;
 	}
-	// spawn the default weapon and equip it
-	EquipWeapon( SpawnDefaultWeapon( ) );
+	// spawn the default weapon and attach it to the mesh
+	SpawnDefaultWeapon( );
 }
 
 void AShooterCharacter::MoveForward( float Value )
@@ -489,53 +486,21 @@ void AShooterCharacter::TraceForItems( )
 	}
 }
 
-AWeapon* AShooterCharacter:: SpawnDefaultWeapon( )
+void AShooterCharacter::SpawnDefaultWeapon( )
 {
 	// check the TSubClassOf Variable
 	if ( DefaultWeaponClass )
 	{
 		// Spawn the Weapon
-		return GetWorld( )->SpawnActor<AWeapon>( DefaultWeaponClass );
-	}
-	else
-	{
-		return nullptr;
-	}
-}
-
-void AShooterCharacter::EquipWeapon( AWeapon* WeaponToEquip )
-{
-	if ( WeaponToEquip )
-	{
+		AWeapon* DefaultWeapon = GetWorld( )->SpawnActor<AWeapon>( DefaultWeaponClass );
+		// Get the Hand Socket
 		const USkeletalMeshSocket* HandSocket = GetMesh( )->GetSocketByName( FName( "RightHandSocket" ) );
 		if ( HandSocket )
 		{
 			// attach the weapon to the hand socket  RightHandSocket
-			HandSocket->AttachActor( WeaponToEquip, GetMesh( ) );
+			HandSocket->AttachActor( DefaultWeapon, GetMesh( ) );
 		}
-		// set equipped weapon to the newly spawned weapon
-		EquippedWeapon = WeaponToEquip;
-		EquippedWeapon->SetItemState( EItemState::EIS_Equipped );
 	}
-}
-
-void AShooterCharacter::DropWeapon( )
-{
-	if ( EquippedWeapon )
-	{
-		FDetachmentTransformRules DetachmentTransfoemRules( EDetachmentRule::KeepWorld, true );
-		EquippedWeapon->GetItemMesh( )->DetachFromComponent( DetachmentTransfoemRules );
-	}
-}
-
-void AShooterCharacter::SelectButtonPressed( )
-{
-	DropWeapon( );
-}
-
-void AShooterCharacter::SelectButtonReleased( )
-{
-
 }
 
 void AShooterCharacter::StartCrosshairBulletFire( )
@@ -594,13 +559,7 @@ void AShooterCharacter::SetupPlayerInputComponent( UInputComponent* PlayerInputC
 		&AShooterCharacter::AimingButtonPressed );
 	PlayerInputComponent->BindAction( "AimingButton", IE_Released, this,
 		&AShooterCharacter::AimingButtonReleased );
-
-	PlayerInputComponent->BindAction( "Select", IE_Pressed, this,
-		&AShooterCharacter::SelectButtonPressed );
-	PlayerInputComponent->BindAction( "Select", IE_Released, this,
-		&AShooterCharacter::SelectButtonReleased );
 }
-
 
 float AShooterCharacter::GetCrosshairSpreadMultiplier( ) const
 {

@@ -17,59 +17,42 @@ enum class EItemRarity : uint8
 
 	EIR_Max			UMETA( DisplayName = "DefaultMAX" )
 };
-
-UENUM( BlueprintType )
-enum class EItemState : uint8
-{
-	EIS_Pickup			UMETA( DisplayName = "Pickup" ),
-	EIS_EquipInterping	UMETA( DisplayName = "EquipInterping" ),
-	EIS_Pickedup		UMETA( DisplayName = "Pickedup" ),
-	EIS_Equipped		UMETA( DisplayName = "Equipped" ),
-	EIS_Falling			UMETA( DisplayName = "Falling" ),
-
-	EIR_Max				UMETA( DisplayName = "DefaultMAX" )
-
-};
-
 UCLASS()
 class SHOOTER_API AItem : public AActor
 {
-	GENERATED_BODY( )
-
-public:
+	GENERATED_BODY()
+	
+public:	
 	// Sets default values for this actor's properties
-	AItem( );
+	AItem();
 
 protected:
 	// Called when the game starts or when spawned
-	virtual void BeginPlay( ) override;
+	virtual void BeginPlay() override;
 
 	/* called when overlapping AreaSphere */
-	UFUNCTION( )
-		void OnSphereOverlap(
-			UPrimitiveComponent* OverlappedComponent,
-			AActor* OtherActor,
-			UPrimitiveComponent* OtherComp,
-			int32 OtherbodyIndex,
-			bool bFromSweep,
-			const FHitResult& SweepResult );
+	UFUNCTION()
+	void OnSphereOverlap(
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherbodyIndex,
+		bool bFromSweep,
+		const FHitResult& SweepResult);
 
 	/* called when end overlapping AreaSphere */
-	UFUNCTION( )
-		void ONSphereEndOverlap(
-			UPrimitiveComponent* OverlappedComponenet,
-			AActor* OtherActor,
-			UPrimitiveComponent* OtherComp,
-			int32 OtherBodyIndex );
+	UFUNCTION()
+	void ONSphereEndOverlap(
+		UPrimitiveComponent* OverlappedComponenet,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex );
 
 	/* Sets the ActiveStars array of bools based on rarity */
 	void SetActiveStars( );
-
-	/* sets properties of the item's components based on state */
-	void SetItemProperties( EItemState State );
-public:
+public:	
 	// Called every frame
-	virtual void Tick( float DeltaTime ) override;
+	virtual void Tick(float DeltaTime) override;
 
 private:
 	/* skeletal mesh for the item */
@@ -77,42 +60,32 @@ private:
 		USkeletalMeshComponent* ItemMesh;
 
 	/* line trace collides with box to show HUD widgets */
-	UPROPERTY( EditAnywhere, BlueprintReadOnly, Category = ItemProperties, meta = ( AllowPrivateAccess = "true" ) )
-		class UBoxComponent* CollisionBox;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = ItemProperties, meta = ( AllowPrivateAccess = "true" ) )
+	class UBoxComponent* CollisionBox;
 
 	/* pop up widget for when the player looks at the item */
-	UPROPERTY( EditAnywhere, BlueprintReadOnly, Category = ItemProperties, meta = ( AllowPrivateAccess = "true" ) )
-		class UWidgetComponent* PickupWidget;
+	UPROPERTY( EditAnywhere, BlueprintReadOnly, Category = ItemProperties, meta = ( AllowPrivateAccess = "true" ) ) 
+	class UWidgetComponent* PickupWidget;
 
 	/* enables item tracing when overlapped*/
 	UPROPERTY( EditAnywhere, BlueprintReadOnly, Category = ItemProperties, meta = ( AllowPrivateAccess = "true" ) )
-		class USphereComponent* AreaSphere;
+	class USphereComponent* AreaSphere;
 
 	/* the name which appears on the pickup widget */
 	UPROPERTY( EditAnywhere, BlueprintReadOnly, Category = ItemProperties, meta = ( AllowPrivateAccess = "true" ) )
-		FString ItemName;
+	FString ItemName;
 
 	/* ItemCount (ammo et.) */
 	UPROPERTY( EditAnywhere, BlueprintReadOnly, Category = ItemProperties, meta = ( AllowPrivateAccess = "true" ) )
-		int32 ItemCount;
+	int32 ItemCount;
 
 	/* Item rarity - determines number of stars in Pickup Widget */
 	UPROPERTY( EditAnywhere, BlueprintReadOnly, Category = ItemProperties, meta = ( AllowPrivateAccess = "true" ) )
-		EItemRarity ItemRarity;
-
+	EItemRarity ItemRarity;
+ 
 	UPROPERTY( VisibleAnywhere, BlueprintReadOnly, Category = ItemProperties, meta = ( AllowPrivateAccess = "true" ) )
-		TArray<bool> ActiveStars;
-
-	/* state of the item */
-	UPROPERTY( VisibleAnywhere, BlueprintReadOnly, Category = ItemProperties, meta = ( AllowPrivateAccess = "true" ) )
-	EItemState ItemState;
+	TArray<bool> ActiveStars;
 
 public:
 	FORCEINLINE UWidgetComponent* GetPickupWidget( ) const { return PickupWidget; }
-	FORCEINLINE USphereComponent* GetAreaSphere( ) const { return AreaSphere; }
-	FORCEINLINE UBoxComponent* GetCollisionBox( ) const { return CollisionBox; }
-	FORCEINLINE EItemState GetItemState( ) const { return ItemState; }
-	void SetItemState( EItemState State );
-	FORCEINLINE USkeletalMeshComponent* GetItemMesh( ) { return ItemMesh; }
-
 };
