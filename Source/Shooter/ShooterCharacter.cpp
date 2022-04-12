@@ -13,6 +13,8 @@
 #include "Item.h"
 #include "Components/WidgetComponent.h"
 #include "Weapon.h"
+#include "Components/BoxComponent.h"
+#include "Components/SphereComponent.h"
 
 // Sets default values
 AShooterCharacter::AShooterCharacter( ) :
@@ -90,8 +92,8 @@ void AShooterCharacter::BeginPlay( )
 		CameraDefaultFOV = GetFollowCamera( )->FieldOfView;
 		CameraCurrentFOV = CameraDefaultFOV;
 	}
-	// spawn the default weapon and attach it to the mesh
-	SpawnDefaultWeapon( );
+	// spawn the default weapon and equip it
+	EquipWeapon( SpawnDefaultWeapon() );
 }
 
 void AShooterCharacter::MoveForward( float Value )
@@ -373,6 +375,22 @@ void AShooterCharacter::CalculateCrosshairSpread( float DeltaTime )
 		CrosshairShootingFactor;
 }
 
+void AShooterCharacter::StartCrosshairBulletFire( )
+{
+	bFiringBullet = true;
+
+	GetWorldTimerManager( ).SetTimer(
+		CrosshairShootTimer,
+		this,
+		&AShooterCharacter::FinishCrosshairBulletFire,
+		ShootTimeDuration );
+}
+
+void AShooterCharacter::FinishCrosshairBulletFire( )
+{
+	bFiringBullet = false;
+}
+
 void AShooterCharacter::FireButtonPressed( )
 {
 	bFireButtonPressed = true;
@@ -486,37 +504,41 @@ void AShooterCharacter::TraceForItems( )
 	}
 }
 
-void AShooterCharacter::SpawnDefaultWeapon( )
+AWeapon* AShooterCharacter::SpawnDefaultWeapon( )
 {
 	// check the TSubClassOf Variable
 	if ( DefaultWeaponClass )
 	{
 		// Spawn the Weapon
-		AWeapon* DefaultWeapon = GetWorld( )->SpawnActor<AWeapon>( DefaultWeaponClass );
+		return GetWorld( )->SpawnActor<AWeapon>( DefaultWeaponClass );
+	}
+
+	return nullptr;
+}
+
+void AShooterCharacter::EquipWeapon( AWeapon* WeaponToEquip )
+{
+	if ( WeaponToEquip )
+	{
+		// set area sphere to ignore all collision channels
+		WeaponToEquip->GetAreaSphere( )->SetCollisionResponseToAllChannels(
+			ECollisionResponse::ECR_Ignore );
+		// set CollisionBox to ignore all collision channels
+		WeaponToEquip->GetCollisionBox( )->SetCollisionResponseToAllChannels(
+			ECollisionResponse::ECR_Ignore );
+
 		// Get the Hand Socket
-		const USkeletalMeshSocket* HandSocket = GetMesh( )->GetSocketByName( FName( "RightHandSocket" ) );
+		const USkeletalMeshSocket* HandSocket = GetMesh( )->GetSocketByName(
+			FName( "RightHandSocket" ) );
 		if ( HandSocket )
 		{
 			// attach the weapon to the hand socket  RightHandSocket
-			HandSocket->AttachActor( DefaultWeapon, GetMesh( ) );
+			HandSocket->AttachActor( WeaponToEquip, GetMesh( ) );
 		}
+		// set equipped weapon to the newly spawned weapon
+			EquippedWeapon = WeaponToEquip;
+
 	}
-}
-
-void AShooterCharacter::StartCrosshairBulletFire( )
-{
-	bFiringBullet = true;
-
-	GetWorldTimerManager( ).SetTimer( 
-		CrosshairShootTimer, 
-		this, 
-		&AShooterCharacter::FinishCrosshairBulletFire, 
-		ShootTimeDuration );
-}
-
-void AShooterCharacter::FinishCrosshairBulletFire( )
-{
-	bFiringBullet = false;
 }
 
 // Called every frame

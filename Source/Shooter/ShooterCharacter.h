@@ -65,6 +65,11 @@ protected:
 
 	void CalculateCrosshairSpread( float DeltaTime );
 	
+	void StartCrosshairBulletFire( );
+
+	UFUNCTION( )
+	void FinishCrosshairBulletFire( );
+
 	void FireButtonPressed( );
 	void FireButtonReleased( );
 
@@ -79,12 +84,12 @@ protected:
 	/* trace for items if OverlappedItemCOunt > 0 */
 	void TraceForItems( );
 
-	void SpawnDefaultWeapon( );
+	//spawns a default weapon and equips it
+	class AWeapon* SpawnDefaultWeapon( );
 
-	void StartCrosshairBulletFire( );
+	/* takes a weapon and attaches it to the mesh*/
+	void EquipWeapon( AWeapon* WeaponToEquip );
 
-	UFUNCTION()
-	void FinishCrosshairBulletFire( );
 
 public:
 	// Called every frame
@@ -223,7 +228,7 @@ private:
 
 	/* currently equipped weapon */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Combat, meta = ( AllowPrivateAccess = "true" ) )
-	class AWeapon* EquippedWeapon;
+	AWeapon* EquippedWeapon;
 
 	/* Set this in Blueprints for the default weapon class */
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Combat, meta = ( AllowPrivateAccess = "true" ) )
